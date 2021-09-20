@@ -1,0 +1,20 @@
+{
+  "name": "mininft",
+  "version": "1.0.0",
+  "description": "minima nft app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "zip -r mininft.minidapp src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neilshah2000/miniNFT.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/neilshah2000/miniNFT/issues"
+  },
+  "homepage": "https://github.com/neilshah2000/miniNFT#readme"
+}
