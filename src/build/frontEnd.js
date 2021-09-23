@@ -78,7 +78,7 @@ function createContract() {
         auctionAddressString = `extrascript "LET key = PREVSTATE ( 23 ) RETURN SIGNEDBY ( key )"`
         Minima.cmd(auctionAddressString, (res) => {
             console.log(res)
-            let hex = res.response.hexaddress
+            let hex = res.response.address.hexaddress
             resolve(hex)
         })
     })
