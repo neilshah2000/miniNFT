@@ -45,7 +45,7 @@ function newAddress() {
     return new Promise(function(resolve) {
         Minima.cmd('newaddress', function(res) {
             if (res.status) {
-             let addr = res.response.hexaddress;
+             let addr = res.response.address.hexaddress;
              resolve(addr);   
             }
         })
@@ -93,7 +93,7 @@ function sendNFT(hexAddress, myNftTokenId, publicKey) {
             console.log(res)
             if (res.status) {
                 if (res.response && res.response.txpow) {
-                    let coinid = res.response.txpow.body.inputs[0].coinid
+                    let coinid = res.response.txpow.body.txn.inputs[0].coinid
                     resolve(coinid)
                 }
             }
