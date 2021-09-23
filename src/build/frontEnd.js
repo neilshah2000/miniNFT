@@ -1,36 +1,36 @@
+// /////////////////
+
+// "publickey": "0x9E2C4D16466D57A45D3EF9B42A84A424B7B175DF"
+// hexaddress: "0xFE03136653EA81F993A1C55CC24A00E788AEE0C5"
+// side eye chloe
+// tokenid: "0x58CA2E50302556E91E25878934726D87AE1FB51BAD66D70E62B68ED6328766D3DD3560F98AFA6B8CDABA4BAD9746C6FCDDAF600BAB717F0B84558FE7C33CE3D5"
+// coinid: "0xE19F61D56CE0D260A7C3744FA47E24194DFD137B560170BA712DA2A3ECDFCA7CA589E6344A27D1E26B165E1659F2485FBBB359EF49A7E6D273E7DD2513BF969F"
+
+// sendNFT('0xFE03136653EA81F993A1C55CC24A00E788AEE0C5', '0x58CA2E50302556E91E25878934726D87AE1FB51BAD66D70E62B68ED6328766D3DD3560F98AFA6B8CDABA4BAD9746C6FCDDAF600BAB717F0B84558FE7C33CE3D5', '0x9E2C4D16466D57A45D3EF9B42A84A424B7B175DF')
 
 
-// console.log(JSON.stringify(Minima))
+// checkNFTSpendable(nftCoinId, selfAddress, nftTokenId, pubKeyUsedInScript, scale)
 
-// Minima.init((res) => {
-//     if (res.event === 'connected') {
-//         console.log('Minima successfully loaded')
-//     }
-// })
+// "miniaddress": "MxFHDJ5HIIECUJZ4E5F6CQTS5RHDTDPGGB"
 
+// /// 
 
-// // Get all the NFTs that are in my wallet
-// function getAllMyNFTs() {
-//     const command = 'balance'
-//     cmd(command).then((res) => {
-//         console.log('BALANCE')
-//         console.log(JSON.stringify(res))
-//     })
-// }
+// NFT coin id is now different because we moved it into the auction contract
+// "coinid": "0xE19F61D56CE0D260A7C3744FA47E24194DFD137B560170BA712DA2A3ECDFCA7CA589E6344A27D1E26B165E1659F2485FBBB359EF49A7E6D273E7DD2513BF969F",
 
 
-// function transferToNeil() {
-//     transfer(5, '0x00', 'Mx46W4SRJMFOYU7HRNSTMCTN56DYA23EFQ')
-// }
 
-// // "send            ": "[amount] [address] (tokenid|tokenid statevars) - Send Minima or Tokens to a certain address.",
-// function transfer(amount, coin, toWalletAddress) {
-//     const command = `send ${amount} ${toWalletAddress} ${coin}`
-//     cmd(command).then((res) => {
-//         console.log('TRANSFER')
-//         console.log(JSON.stringify(res))
-//     })
-// }
+// checkNFTSpendable(0xE19F61D56CE0D260A7C3744FA47E24194DFD137B560170BA712DA2A3ECDFCA7CA589E6344A27D1E26B165E1659F2485FBBB359EF49A7E6D273E7DD2513BF969F, MxFHDJ5HIIECUJZ4E5F6CQTS5RHDTDPGGB, 0x58CA2E50302556E91E25878934726D87AE1FB51BAD66D70E62B68ED6328766D3DD3560F98AFA6B8CDABA4BAD9746C6FCDDAF600BAB717F0B84558FE7C33CE3D5, 0x9E2C4D16466D57A45D3EF9B42A84A424B7B175DF, 36)
+
+// error: "Invalid MMR Proof"
+
+// Therefore we need the new coinid for the NFT after its sent to contract
+// "coinid": "0xE19F61D56CE0D260A7C3744FA47E24194DFD137B560170BA712DA2A3ECDFCA7CA589E6344A27D1E26B165E1659F2485FBBB359EF49A7E6D273E7DD2513BF969F"
+
+
+
+
+
 
 
 function showAllMyCoins() {
@@ -79,7 +79,7 @@ function sendNFT(hexAddress, myNftTokenId, publicKey) {
 // check the nft is still spendable by me
 // *********** this cancels the auction *********
 function checkNFTSpendable(nftCoinId, selfAddress, nftTokenId, pubKeyUsedInScript, scale) {
-    minimaAmount = 1 / Math.pow(10, scale)
+    let minimaAmount = 1 / Math.pow(10, scale)
     let command = `txncreate 10;
         txninput 10 ${nftCoinId};
         txnoutput 10 ${minimaAmount} ${selfAddress} ${nftTokenId};
@@ -87,19 +87,6 @@ function checkNFTSpendable(nftCoinId, selfAddress, nftTokenId, pubKeyUsedInScrip
         txnpost 10;
         txndelete 10`
     Minima.cmd(command, console.log)
-     
 }
 
 
-
-
-
-
-
-
-
-
-
-
-// transferToNeil()
-// getAllMyNFTs()
