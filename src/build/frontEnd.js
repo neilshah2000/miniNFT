@@ -1,7 +1,4 @@
 // /////////////////
-
-const { Minima } = require("./minima");
-
 // "publickey": "0x9E2C4D16466D57A45D3EF9B42A84A424B7B175DF"
 // hexaddress: "0xFE03136653EA81F993A1C55CC24A00E788AEE0C5"
 // side eye chloe
