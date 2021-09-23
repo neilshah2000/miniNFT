@@ -9,27 +9,33 @@
 // })
 
 
-// Get all the NFTs that are in my wallet
-function getAllMyNFTs() {
-    const command = 'balance'
-    cmd(command).then((res) => {
-        console.log('BALANCE')
-        console.log(JSON.stringify(res))
-    })
-}
+// // Get all the NFTs that are in my wallet
+// function getAllMyNFTs() {
+//     const command = 'balance'
+//     cmd(command).then((res) => {
+//         console.log('BALANCE')
+//         console.log(JSON.stringify(res))
+//     })
+// }
 
 
-function transferToNeil() {
-    transfer(5, '0x00', 'Mx46W4SRJMFOYU7HRNSTMCTN56DYA23EFQ')
-}
+// function transferToNeil() {
+//     transfer(5, '0x00', 'Mx46W4SRJMFOYU7HRNSTMCTN56DYA23EFQ')
+// }
 
-// "send            ": "[amount] [address] (tokenid|tokenid statevars) - Send Minima or Tokens to a certain address.",
-function transfer(amount, coin, toWalletAddress) {
-    const command = `send ${amount} ${toWalletAddress} ${coin}`
-    cmd(command).then((res) => {
-        console.log('TRANSFER')
-        console.log(JSON.stringify(res))
-    })
+// // "send            ": "[amount] [address] (tokenid|tokenid statevars) - Send Minima or Tokens to a certain address.",
+// function transfer(amount, coin, toWalletAddress) {
+//     const command = `send ${amount} ${toWalletAddress} ${coin}`
+//     cmd(command).then((res) => {
+//         console.log('TRANSFER')
+//         console.log(JSON.stringify(res))
+//     })
+// }
+
+
+function showAllMyCoins() {
+    command = 'balance'
+    Minima.cmd(command, console.log)
 }
 
 
@@ -56,9 +62,9 @@ function createContract() {
 
 
 // send NFT to contract
-function sendNFT(hexAddress) {
+function sendNFT(hexAddress, myNftTokenId) {
     return new Promise((resolve, reject) => {
-        let command = `send 1 ${hexAddress} ${MY_NFT_TOKEN_ID}`
+        let command = `send 1 ${hexAddress} ${myNftTokenId}`
         Minima.cmd(command, (res) => {
             console.log(res)
             let coinid = res.txpow.body.inputs[0].coinid
@@ -93,5 +99,5 @@ function checkNFTSpendable(nftCoinId, selfAddress, nftTokenId, pubKeyUsedInScrip
 
 
 
-transferToNeil()
-getAllMyNFTs()
+// transferToNeil()
+// getAllMyNFTs()
