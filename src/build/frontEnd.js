@@ -33,9 +33,10 @@ var mPUBLICKEY = '';
 var uNFTCOINID = '';
 var mADDRESS = '';
 var sADDRESS = '';
-var NFTTOKENID = ''; // manual
-var oNFTCOINID = ''; // manual
+var TOKENID = ''; // manual
 var SCALE = 0; // manual
+
+console.log('Manually set SCALE, TOKENID');
 
 
 function showAllMyCoins() {
@@ -125,9 +126,9 @@ async function setAll() {
     mADDRESS = await newAddress();
     sADDRESS = await createContract(); // script address
     
-    uNFTCOINID = await sendNFT(sADDRESS, NFTTOKENID, mPUBLICKEY);
+    uNFTCOINID = await sendNFT(sADDRESS, TOKENID, mPUBLICKEY);
 
-    checkNFTSpendable(uNFTCOINID, mADDRESS, NFTTOKENID, mPUBLICKEY, SCALE);
+    checkNFTSpendable(uNFTCOINID, mADDRESS, TOKENID, mPUBLICKEY, SCALE);
 
 
 }
