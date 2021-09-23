@@ -62,9 +62,9 @@ function createContract() {
 
 
 // send NFT to contract
-function sendNFT(hexAddress, myNftTokenId) {
+function sendNFT(hexAddress, myNftTokenId, publicKey) {
     return new Promise((resolve, reject) => {
-        let command = `send 1 ${hexAddress} ${myNftTokenId}`
+        let command = `send 1 ${hexAddress} ${myNftTokenId} 23:${publicKey}`
         Minima.cmd(command, (res) => {
             console.log(res)
             let coinid = res.txpow.body.inputs[0].coinid
