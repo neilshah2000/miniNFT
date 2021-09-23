@@ -78,13 +78,15 @@ function sendNFT(hexAddress, myNftTokenId) {
 
 // check the nft is still spendable by me
 // *********** this cancels the auction *********
-function checkNFTSpendable(nftCoinId, selfAddress, nftTokenId, pubKeyUsedInScript) {
+function checkNFTSpendable(nftCoinId, selfAddress, nftTokenId, pubKeyUsedInScript, scale) {
+    minimaAmount = 1 / Math.exp(scale)
     let command = `txncreate 10;
         txninput 10 ${nftCoinId};
-        txnoutput 10 1 ${selfAddress} ${nftTokenId};
+        txnoutput 10 ${minimaAmount} ${selfAddress} ${nftTokenId};
         txnsign 10 ${pubKeyUsedInScript};
         txnpost 10;
         txndelete 10`
+    Minima.cmd(command, console.log)
      
 }
 
