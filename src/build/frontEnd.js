@@ -1,5 +1,7 @@
 // /////////////////
 
+const { Minima } = require("./minima");
+
 // "publickey": "0x9E2C4D16466D57A45D3EF9B42A84A424B7B175DF"
 // hexaddress: "0xFE03136653EA81F993A1C55CC24A00E788AEE0C5"
 // side eye chloe
@@ -27,27 +29,52 @@
 // Therefore we need the new coinid for the NFT after its sent to contract
 // "coinid": "0xE19F61D56CE0D260A7C3744FA47E24194DFD137B560170BA712DA2A3ECDFCA7CA589E6344A27D1E26B165E1659F2485FBBB359EF49A7E6D273E7DD2513BF969F"
 
-
-
-
-
+var mPUBLICKEY = ''; 
+var uNFTCOINID = '';
+var mADDRESS = '';
+var sADDRESS = '';
+var NFTTOKENID = ''; // manual
+var oNFTCOINID = ''; // manual
+var SCALE = 0; // manual
 
 
 function showAllMyCoins() {
-    command = 'balance'
+    let command = 'balance'
     Minima.cmd(command, console.log)
 }
 
+function newAddress() {
+    return new Promise(function(resolve) {
+        Minima.cmd('newaddress', function(res) {
+            if (res.status) {
+             let addr = res.response.hexaddress;
+             resolve(addr);   
+            }
+        })
+    });
+}
 
-let AUCTION_CONTRACT_ADDRESS = ''
-let MY_NFT_TOKEN_ID = 'blah bl;ah'
+function newKey() {
+    return new Promise(function(resolve) {
+        Minima.cmd('keys new', function(res) {
+            if (res.status) {
+             let key = res.response.key.publickey;
+             resolve(key);   
+            }
+        })
+    });
+}
 
-// script to register NFT at auction address
 
 // create contract
 // LET key = PREVSTATE (23)
 // RETURN SIGNEDBY ( key )
 // part of extra script
+
+/**
+ * Register script as auction address
+ * @returns Hexaddress of script
+ */
 function createContract() {
     return new Promise((resolve, reject) => {
         auctionAddressString = `extrascript "LET key = PREVSTATE ( 23 ) RETURN SIGNEDBY ( key )"`
@@ -60,20 +87,22 @@ function createContract() {
     
 }
 
-
 // send NFT to contract
 function sendNFT(hexAddress, myNftTokenId, publicKey) {
     return new Promise((resolve, reject) => {
         let command = `send 1 ${hexAddress} ${myNftTokenId} 23:${publicKey}`
         Minima.cmd(command, (res) => {
             console.log(res)
-            let coinid = res.txpow.body.inputs[0].coinid
-            resolve(coinid)
+            if (res.status) {
+                if (res.response && res.response.txpow) {
+                    let coinid = res.response.txpow.body.inputs[0].coinid
+                    resolve(coinid)
+                }
+            }
         })
     })
     
 }
-
 
 
 // check the nft is still spendable by me
@@ -90,3 +119,15 @@ function checkNFTSpendable(nftCoinId, selfAddress, nftTokenId, pubKeyUsedInScrip
 }
 
 
+async function setAll() {
+    
+    mPUBLICKEY = await newKey();
+    mADDRESS = await newAddress();
+    sADDRESS = await createContract(); // script address
+    
+    uNFTCOINID = await sendNFT(sADDRESS, NFTTOKENID, mPUBLICKEY);
+
+    checkNFTSpendable(uNFTCOINID, mADDRESS, NFTTOKENID, mPUBLICKEY, SCALE);
+
+
+}
