@@ -30,12 +30,13 @@ var mPUBLICKEY = '';
 var uNFTCOINID = '';
 var mADDRESS = '';
 var sADDRESS = '';
-var aTOKENIWOULDWANT = '';
 
 var TOKENID = ''; // manual
 var SCALE = 0; // manual
 
-console.log('Manually set SCALE, TOKENID');
+var BIDDERADDRESS = ''
+
+console.log('Manually set SCALE, TOKENID, ');
 
 
 function showAllMyCoins() {
@@ -118,7 +119,7 @@ function getCoinId(zTOKENID) {
 
 // check the nft is still spendable by me
 // *********** this cancels the auction *********
-function checkNFTSpendable(nftCoinId, selfAddress, nftTokenId, pubKeyUsedInScript, scale) {
+function cancelAuction(nftCoinId, selfAddress, nftTokenId, pubKeyUsedInScript, scale) {
     let minimaAmount = 1 / Math.pow(10, scale)
     let command = `txncreate 10;
         txninput 10 ${nftCoinId};
@@ -148,13 +149,12 @@ async function setAll() {
     // we need subsequent transaction to get the coinid
 
     // use original coin id instead everywhere
-    await sendNFT(sADDRESS, TOKENID, mPUBLICKEY);
-
+                                    
     // manually get new coinid after sendind to contract
     // uNFTCOINID = await getCoinId(TOKENID)
 
     // now do self send
-    // checkNFTSpendable(uNFTCOINID, mADDRESS, TOKENID, mPUBLICKEY, SCALE);
+    // cancelAuction(uNFTCOINID, mADDRESS, TOKENID, mPUBLICKEY, SCALE);
 
 
     // before we do this, check that confirmed = 1 for that NFT coin
@@ -175,7 +175,7 @@ async function setAll() {
     // coin id of my coin
     // not static
     // "coinid": "0x7EE9281629294564F32CF6AEBC9401C608F9495C3770D1AD80A1000314546855941F9756178B6DD5DC183069B24DCCA98BE6E69FC10390FEF090A6EBF896F838",
-    // checkNFTSpendable(oNFTCOINID, mADDRESS, TOKENID, mPUBLICKEY, SCALE);
+    // cancelAuction(oNFTCOINID, mADDRESS, TOKENID, mPUBLICKEY, SCALE);
 
 
 }
@@ -197,11 +197,11 @@ RETURN VERIFYOUT (@INPUT 1 bidderaddress token )
 async function bidContract() {
     const bidHexAddress = await createBidContract();
     
-    const anAddress = await newAddress()
+    const BIDDERADDRESS = await newAddress()
     const aKey = await newKey()
 
     // bidder bid 2 minima
-    createBidTransaction(2, bidHexAddress, anAddress, aKey, aTOKENIWOULDWANT);
+    createBidTransaction(3, bidHexAddress, BIDDERADDRESS, aKey, TOKENID);
 
 }
 
@@ -209,15 +209,15 @@ async function bidContract() {
 // smart contract to do the transfer
 function createBidContract() {
     return new Promise((resolve, reject) => {
-        bidScript = `extrascript "LET bidderpubkey  = PREVSTATE(0)
-                                    LET bidderaddress = PREVSTATE(1)
-                                    LET token = PREVSTATE(2)
+        bidScript = 'extrascript "LET bidderpubkey  = PREVSTATE(0) ' +
+                                'LET bidderaddress = PREVSTATE(1) ' +
+                                'LET token = PREVSTATE(2) ' +
                                 
-                                    IF SIGNEDBY ( bidderpubkey ) AND @BLKDIFF GT 100
-                                            THEN RETURN TRUE 
-                                    ENDIF
-                                    
-                                    RETURN VERIFYOUT (@INPUT 1 bidderaddress token ) "`;
+                                'IF SIGNEDBY ( bidderpubkey ) AND @BLKDIFF GT 100 ' +
+                                        'THEN RETURN TRUE ' +
+                                'ENDIF ' +
+                                
+                                'RETURN VERIFYOUT (@INPUT 1 bidderaddress token ) "';
         Minima.cmd(bidScript, (res) => {
             console.log(res)
             let hex = res.response.address.hexaddress
@@ -229,7 +229,9 @@ function createBidContract() {
 
 
 function createBidTransaction(amount, scriptAddress, myAddress, myPubKey, tokenIdIWant) {
-    const sendTransaction = `send ${amount} ${scriptAddress} 0:${myPubKey} 1:${myAddress} 2:${tokenIdIWant}`
+    console.log('bidder address', myAddress)
+    const minimaTokenId = '0x00'
+    const sendTransaction = `send ${amount} ${scriptAddress} ${minimaTokenId} 0:${myPubKey}#1:${myAddress}#2:${tokenIdIWant}`
     Minima.cmd(sendTransaction, console.log)
 }
 
@@ -262,4 +264,12 @@ function acceptBid(inputCoinId1, inputCoinId2, outputAmount1, outputAmount2, tok
 // Bidder cancels his bid if blkDiff gte 100 and signed by bidder
 function cancelMyBid() {
 
+}
+
+
+//
+function transferNFT() {
+    bidderAdddress = '0xEFD79A7A26A33BA2A8AFE5B71469FF459B34B712'
+    nftTokenId = '0x69F3EC88A7D7B5545D74A97EDABAB18595ED0E5896E7C521FA39C66E8CFCE09B770D389F42D394777DB718C4F7B26679A5D3EFD748AB96BB13AC01365265299E'
+    command  = 'send 1 '
 }
