@@ -77,7 +77,7 @@ function newKey() {
 function createContract() {
     return new Promise((resolve, reject) => {
         // auctionAddressString = `extrascript "LET key = PREVSTATE ( 23 ) RETURN SIGNEDBY ( key )"`
-        auctionAddressString = `extrascript "LET pkey = PREVSTATE ( 23 ) RETURN SIGNEDBY ( pkey )"`
+        auctionAddressString = `extrascript "LET mkey = PREVSTATE ( 23 ) RETURN SIGNEDBY ( mkey )"`
         Minima.cmd(auctionAddressString, (res) => {
             console.log(res)
             let hex = res.response.address.hexaddress
@@ -88,21 +88,22 @@ function createContract() {
 }
 
 // send NFT to contract
-function sendNFT(hexAddress, myNftTokenId, publicKey) {
+function sendNFT(scriptAddress, myNftTokenId, publicKey) {
     return new Promise((resolve, reject) => {
-        let command = `send 1 ${hexAddress} ${myNftTokenId} 23:${publicKey}`
+        let command = `send 1 ${scriptAddress} ${myNftTokenId} 23:${publicKey}`
         Minima.cmd(command, (res) => {
             // do nothing, we dont need any data right now
-            resolve()
+            console.log(res)
+            resolve(true)
         })
     })
     
 }
 
 
-function getCoinId(TOKENID) {
+function getCoinId(zTOKENID) {
     return new Promise((resolve, reject) => {
-        let command = `coins tokenid:${TOKENID} relevant:true`
+        let command = `coins tokenid:${zTOKENID} relevant:true`
         Minima.cmd(command, (res) => {
             console.log(res)
             mCoinId = res.response.coins[0].data.coin.coinid
@@ -132,7 +133,7 @@ async function setAll() {
     
     mPUBLICKEY = await newKey();
     mADDRESS = await newAddress();
-    sADDRESS = await createContract(); // script address
+    sADDRESS = await createContract(); // follow this script address
     
     // dont get it when we send the transacrion
     // maybe get it from balance
@@ -144,10 +145,10 @@ async function setAll() {
     await sendNFT(sADDRESS, TOKENID, mPUBLICKEY);
 
     // manually get new coinid after sendind to contract
-    uNFTCOINID = await getCoinId(TOKENID)
+    // uNFTCOINID = await getCoinId(TOKENID)
 
     // now do self send
-    checkNFTSpendable(uNFTCOINID, mADDRESS, TOKENID, mPUBLICKEY, SCALE);
+    // checkNFTSpendable(uNFTCOINID, mADDRESS, TOKENID, mPUBLICKEY, SCALE);
 
 
     // before we do this, check that confirmed = 1 for that NFT coin
