@@ -93,6 +93,7 @@ function sendNFT(hexAddress, myNftTokenId, publicKey) {
         let command = `send 1 ${hexAddress} ${myNftTokenId} 23:${publicKey}`
         Minima.cmd(command, (res) => {
             // do nothing, we dont need any data right now
+            resolve()
         })
     })
     
