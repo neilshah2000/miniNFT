@@ -30,6 +30,7 @@ var mPUBLICKEY = '';
 var uNFTCOINID = '';
 var mADDRESS = '';
 var sADDRESS = '';
+
 var TOKENID = ''; // manual
 var SCALE = 0; // manual
 
@@ -75,7 +76,8 @@ function newKey() {
  */
 function createContract() {
     return new Promise((resolve, reject) => {
-        auctionAddressString = `extrascript "LET key = PREVSTATE ( 23 ) RETURN SIGNEDBY ( key )"`
+        // auctionAddressString = `extrascript "LET key = PREVSTATE ( 23 ) RETURN SIGNEDBY ( key )"`
+        auctionAddressString = `extrascript "LET pkey = PREVSTATE ( 23 ) RETURN SIGNEDBY ( pkey )"`
         Minima.cmd(auctionAddressString, (res) => {
             console.log(res)
             let hex = res.response.address.hexaddress
@@ -90,17 +92,25 @@ function sendNFT(hexAddress, myNftTokenId, publicKey) {
     return new Promise((resolve, reject) => {
         let command = `send 1 ${hexAddress} ${myNftTokenId} 23:${publicKey}`
         Minima.cmd(command, (res) => {
-            console.log(res)
-            if (res.status) {
-                if (res.response && res.response.txpow) {
-                    let coinid = res.response.txpow.body.txn.inputs[0].coinid
-                    resolve(coinid)
-                }
-            }
+            // do nothing, we dont need any data right now
         })
     })
     
 }
+
+
+function getCoinId(TOKENID) {
+    return new Promise((resolve, reject) => {
+        let command = `coins tokenid:${TOKENID} relevant:true`
+        Minima.cmd(command, (res) => {
+            console.log(res)
+            mCoinId = res.response.coins[0].data.coin.coinid
+            resolve(mCoinId)
+        })
+    })
+}
+
+
 
 
 // check the nft is still spendable by me
@@ -123,9 +133,41 @@ async function setAll() {
     mADDRESS = await newAddress();
     sADDRESS = await createContract(); // script address
     
-    uNFTCOINID = await sendNFT(sADDRESS, TOKENID, mPUBLICKEY);
+    // dont get it when we send the transacrion
+    // maybe get it from balance
+    // or somewhere else
+    // we need coinid from output
+    // we need subsequent transaction to get the coinid
 
+    // use original coin id instead everywhere
+    await sendNFT(sADDRESS, TOKENID, mPUBLICKEY);
+
+    // manually get new coinid after sendind to contract
+    uNFTCOINID = await getCoinId(TOKENID)
+
+    // now do self send
     checkNFTSpendable(uNFTCOINID, mADDRESS, TOKENID, mPUBLICKEY, SCALE);
+
+
+    // before we do this, check that confirmed = 1 for that NFT coin
+    // get coin id with 
+    // coins tokenid:0x21D3088DA0D8B26FBF2E07773CDEADFB45DE1D4F478C9DC135A2DBFB6A6B38C76E26944EFE53E13DC98510EF6B3B0141B3797639CCB068790267B3EA46D09CE1 relevant:true
+    // use address: instead relevent true (my coins). This will get for all your coins
+
+    // address of auction smart contract
+    // coins address:0xBA968F4DEA64F55B0A48A6B090BCA3EC16E5BD17. all auctions from any user
+    // coins address:0xBA968F4DEA64F55B0A48A6B090BCA3EC16E5BD17 relevent:true (all your own auctions)
+
+    // address of bid contract
+
+
+    // res.response.coins[0].data.coin.coinid
+
+
+    // coin id of my coin
+    // not static
+    // "coinid": "0x7EE9281629294564F32CF6AEBC9401C608F9495C3770D1AD80A1000314546855941F9756178B6DD5DC183069B24DCCA98BE6E69FC10390FEF090A6EBF896F838",
+    // checkNFTSpendable(oNFTCOINID, mADDRESS, TOKENID, mPUBLICKEY, SCALE);
 
 
 }
