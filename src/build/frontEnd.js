@@ -239,25 +239,14 @@ function createBidTransaction(amount, scriptAddress, myAddress, myPubKey, tokenI
 
 
 
-
 // The Host accepts bid of bidder
-function acceptBid(inputCoinId1, inputCoinId2, outputAmount1, outputAmount2, tokenIdThatBidderWants, hostPubKey, hostAddress, bidderAddress) {
-    // construct manual transaction
-    const minimaTOKEN = '0x00';
+function acceptBid(zTokenID, zAddress) {
     let minimaAmount = 1 / Math.pow(10, scale)
-    // create 11
-    // minima coin in input 0
-    // token coin in input 1
-    // output coin of minima 0  
-    // output coin of token 1
-
-    let command = `txncreate 11;
-        txninput 11 ${inputCoinId1} 0;
-        txninput 11 ${inputCoinId2} 1;
-        txnoutput 11 ${outputAmount1} ${hostAddress} ${tokenIdThatBidderWants} 0;
-        txnoutput 11 ${outputAmount2} ${bidderAddress} ${minimaTOKEN} 1;
-        txnpost 11;
-        txndelete 11`
+    let command = `txncreate 10;
+        txninput 10 ${nftCoinId};
+        txnoutput 10 ${minimaAmount} ${zAddress} ${zTokenID};
+        txnpost 10;
+        txndelete 10`
     Minima.cmd(command, console.log)
 
 }
@@ -267,9 +256,8 @@ function cancelMyBid() {
 }
 
 
-//
-function transferNFT() {
-    bidderAdddress = '0xEFD79A7A26A33BA2A8AFE5B71469FF459B34B712'
-    nftTokenId = '0x69F3EC88A7D7B5545D74A97EDABAB18595ED0E5896E7C521FA39C66E8CFCE09B770D389F42D394777DB718C4F7B26679A5D3EFD748AB96BB13AC01365265299E'
-    command  = 'send 1 '
-}
+// AUCTION NFT
+// BIDDER MAKES BID
+// SELLER SENDING NFT
+// BIDDER CHECK NFT
+// 
