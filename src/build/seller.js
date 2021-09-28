@@ -79,10 +79,16 @@ function getCoinId(zTokenId) {
 }
 
 
-
+// TODO: work on accepting the bid
+// TOKENID = '0xE116321649D240B03E324054B46C42F5938FB3DCC2D0F4553C82D22DDC8100562CFC8850F884901D3D972CA3993A2C56D815F096D8B5E017AC4D1CAD77239839'
+// BIDDER_SCRIPT_ADDRESS = "0xBE7EBC34C1B8767D5D0DB52C3664B83E416C4C7E"
+// AUCTION_SCRIPT_ADDRESS = "0x13370615EE5D6D0F5BDC28EF5E34B3FCF4A116B8"
+// sellerAddress = 0x05ED7A3D55738153E9EAC474C76BCB46996EB064
+// bidderAddress = 0x902BE3A60CAF00F28EBC66DE8CAAFDAB41C7EA5D
+// minimaAmountBid = 2
+// scale = 44
 
 // The Host accepts bid of bidder
-// bidderAddress = 0xA2DCA23AD5FE657D1EB177A7AB896F7E8EF888CF
 async function acceptBid(bidContract, nftTokenId, buyerAddress, minimaAmountBid, sellerAddress, scale) {
     let minimaAmountNFT = 1 / Math.pow(10, scale)
     let minimaTokenId = '0x00'
@@ -99,7 +105,6 @@ async function acceptBid(bidContract, nftTokenId, buyerAddress, minimaAmountBid,
         txnpost 10;
         txndelete 10`
     Minima.cmd(command, console.log)
-  
 }
 
 
