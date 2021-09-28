@@ -1,3 +1,23 @@
+
+/**
+ * Automates the sellers actions
+ */
+ async function setAll() {
+    
+    mPUBLICKEY = await newKey();
+    mADDRESS = await newAddress();
+    
+    await createAuction(AUCTIONSCRIPT, TOKENID, mPUBLICKEY);
+}
+
+
+
+
+
+/////// helpers /////////
+
+
+
 /**
  * Seller Create Auction
  * @param {*} scriptAddress 
@@ -77,13 +97,20 @@ function newKey() {
         })
     });
 }
-/**
- * Automates the sellers actions
- */
-async function setAll() {
-    
-    mPUBLICKEY = await newKey();
-    mADDRESS = await newAddress();
-    sADDRESS = await createContract(); // follow this script address
-    await createAuction(AUCTIONSCRIPT, TOKENID, mPUBLICKEY);
-}
+
+
+
+// 0x0E787705A1AC6795A5F2958269EF6EDBB3699A5AC74DC2DA9443186DC225BD9F240A7E9833DB4CE68CB38FB11EC51FFD543F986AB404EDF68F9A27DD8773766B'
+// acceptBid(TOKENID, '0x9B5AD40C46D0F21EB996A1059A4676D3BD7A4D80', 44)
+// The Host accepts bid of bidder
+async function acceptBid(nftTokenID, sellerAddress, scale) {
+    let minimaAmount = 1 / Math.pow(10, scale)
+    const coinId = await getCoinId(zTokenID)
+    let command = `txncreate 10;
+        txninput 10 ${coinId};
+        txnoutput 10 ${minimaAmount} ${sellerAddress} ${nftTokenID};
+        txnpost 10;
+        txndelete 10`
+    Minima.cmd(command, console.log)
+  
+  }

@@ -6,8 +6,8 @@ var sADDRESS = '';
 var TOKENID = ''; // manual
 var SCALE = 0; // manual
 
-var AUCTIONSCRIPT = ''
-var BIDDERSCRIPT = ''
+var AUCTION_SCRIPT_ADDRESS = ''
+var BIDDER_SCRIPT_ADDRESS = ''
 
 
 
@@ -55,9 +55,9 @@ function createBidContract() {
 
 async function setScripts() {
   console.log('Setting scripts...');
-  AUCTIONSCRIPT = await createAuctionContract()
+  AUCTION_SCRIPT_ADDRESS = await createAuctionContract()
   
-  BIDDERSCRIPT = await createBidContract()
+  BIDDER_SCRIPT_ADDRESS = await createBidContract()
 
 }
 // SET EM ALL
