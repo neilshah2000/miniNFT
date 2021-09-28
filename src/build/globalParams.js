@@ -1,7 +1,4 @@
-var mPUBLICKEY = ''; 
-var uNFTCOINID = '';
-var mADDRESS = '';
-var sADDRESS = '';
+
 
 var TOKENID = ''; // manual
 var SCALE = 0; // manual
@@ -12,6 +9,23 @@ var BIDDER_SCRIPT_ADDRESS = ''
 
 
 console.log('Manually set SCALE, TOKENID, ');
+
+
+
+// SET EM ALL
+createSmartContracts()
+
+
+// the same string is used the create the smart contract
+// so will just grab an existing address
+async function createSmartContracts() {
+  console.log('Setting smart contract scripts...');
+  AUCTION_SCRIPT_ADDRESS = await createAuctionContract()
+  
+  BIDDER_SCRIPT_ADDRESS = await createBidContract()
+}
+
+
 
 /**
  * Register Auction Script
@@ -53,12 +67,34 @@ function createBidContract() {
   })
 }
 
-async function setScripts() {
-  console.log('Setting scripts...');
-  AUCTION_SCRIPT_ADDRESS = await createAuctionContract()
-  
-  BIDDER_SCRIPT_ADDRESS = await createBidContract()
 
+/**
+ * Create User HexAddress
+ * @returns Promise<string>
+ */
+ function newAddress() {
+  return new Promise(function(resolve) {
+      Minima.cmd('newaddress', function(res) {
+          if (res.status) {
+           let addr = res.response.address.hexaddress;
+           resolve(addr);   
+          }
+      })
+  });
 }
-// SET EM ALL
-setScripts()
+
+
+/**
+* Create User Public Key
+* @returns Promise<string>
+*/
+function newKey() {
+  return new Promise(function(resolve) {
+      Minima.cmd('keys new', function(res) {
+          if (res.status) {
+           let key = res.response.key.publickey;
+           resolve(key);   
+          }
+      })
+  });
+}
