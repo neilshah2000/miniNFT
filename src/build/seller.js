@@ -162,7 +162,7 @@ function getCoinsFromAddress(address) {
     return new Promise((resolve, reject) => {
         command = `coins address:${address}`
         Minima.cmd(command, (res) => {
-            if (res.status && res.response && res.response.coins) {
+            if (res.status && rbidCoinIDes.response && res.response.coins) {
                 resolve(res.response.coins)
             } else {
                 reject(res)
@@ -171,5 +171,9 @@ function getCoinsFromAddress(address) {
     })
 }
 
-
-
+// TODO
+getBidsForMyNFT(tokenId) {
+    listAllBids.then(() => {
+        // filter for my tokenid
+    })
+}
