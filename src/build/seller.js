@@ -204,5 +204,16 @@ function createNFT(nameStr) {
     if (typeof nameStr !== 'undefined') {
         nftName = nameStr
     }
-    command = `tokencreate name:${nftName} amount:1.0`
+
+    return new Promise((resolve, reject) => {
+        command = `tokencreate name:${nftName} amount:1.0`
+        Minima.cmd(command, (res) => {
+            if (res.status && res.message === 'Send Success') {
+                resolve(res)
+            } else {
+                reject(res)
+            }
+        })
+    })
+    
 }
