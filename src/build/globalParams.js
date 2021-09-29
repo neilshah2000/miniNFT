@@ -98,3 +98,34 @@ function newKey() {
       })
   });
 }
+
+
+function listAuctions() {
+  return new Promise((resolve, reject) => {
+
+    Minima.cmd('coins relevant address:' + AUCTION_SCRIPT_ADDRESS, (res) => {
+
+      console.log(res);
+
+      // Here are all current auctions
+      let auctionSpendableCoins = [];
+
+      res.response.coins.forEach((c) => {
+
+        const coin = {
+          coin: c.data.coin.coinid,
+          tokenid: c.data.coin.tokenid
+        }
+          
+
+        auctionSpendableCoins.push(coin);
+
+
+      });
+
+      console.log(auctionSpendableCoins)
+
+    });
+
+  });
+}
