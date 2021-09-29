@@ -91,6 +91,7 @@ function getCoinId(zTokenId) {
 // The Host accepts bid of bidder
 async function acceptBid(bidContract, nftTokenId, buyerAddress, minimaAmountBid, sellerAddress, scale) {
     let minimaAmountNFT = 1 / Math.pow(10, scale)
+    let forSomeReasonOne = 1
     let minimaTokenId = '0x00'
     const nftCoinId = await getCoinId(nftTokenId)
     const bidContractCoinId = await getCoinIdFromBidContract(bidContract, buyerAddress)
@@ -100,7 +101,7 @@ async function acceptBid(bidContract, nftTokenId, buyerAddress, minimaAmountBid,
     let command = `txncreate 10;
         txninput 10 ${bidContractCoinId} 0;
         txninput 10 ${nftCoinId} 1;
-        txnoutput 10 ${minimaAmountNFT} ${buyerAddress} ${nftTokenId} 0;
+        txnoutput 10 ${forSomeReasonOne} ${buyerAddress} ${nftTokenId} 0;
         txnoutput 10 ${minimaAmountBid} ${sellerAddress} ${minimaTokenId} 1;
         txnpost 10;
         txndelete 10`
@@ -154,4 +155,65 @@ function getCoinsFromAddress(address) {
 }
 
 
+function getAllMyCoins() {
+    return new Promise((resolve, reject) => {
+        command = 'balance'
+        Minima.cmd(command, (res) => {
+            if (res.status && res.response && res.response.balance) {
+                resolve(res.response.balance)
+            } else {
+                reject(res)
+            }
+        })
+    })
+}
 
+
+
+function getAllMyNFTs() {
+    return new Promise((resolve, reject) => {
+        command = 'balance'
+        Minima.cmd(command, (res) => {
+            if (res.status && res.response && res.response.balance) {
+                const nfts = res.response.balance.filter(isCoinNFT)
+                resolve(nfts)
+            } else {
+                reject(res)
+            }
+        })
+    })
+}
+
+/**
+ * @param coin
+ * @returns true if the coins is an NFT.
+ */
+function isCoinNFT(coin) {
+    return coin.decimals === '0'
+}
+
+/**
+ * @param nameStr
+ * @returns void
+ * Creates an NFT with the given name,
+ * or a random name if none is given
+ */
+function createNFT(nameStr) {
+    let nftName = (Math.random() + 1).toString(36).substring(7);
+    nftName = 'NFT-' + nftName
+    if (typeof nameStr !== 'undefined') {
+        nftName = nameStr
+    }
+
+    return new Promise((resolve, reject) => {
+        command = `tokencreate name:${nftName} amount:1.0`
+        Minima.cmd(command, (res) => {
+            if (res.status && res.message === 'Send Success') {
+                resolve(res)
+            } else {
+                reject(res)
+            }
+        })
+    })
+    
+}
