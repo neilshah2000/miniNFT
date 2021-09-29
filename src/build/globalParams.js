@@ -7,6 +7,7 @@ var AUCTION_SCRIPT_ADDRESS = ''
 var BIDDER_SCRIPT_ADDRESS = ''
 var AUCTIONED_TOKENS = [];
 var BIDS = [];
+var MINIMA = '0x00'
 
 
 console.log('Manually set SCALE, TOKENID, ');
@@ -60,7 +61,7 @@ function createBidContract() {
                                       'THEN RETURN TRUE ' +
                               'ENDIF ' +
                               
-                              'RETURN VERIFYOUT (@INPUT 1 bidderaddress token ) "';
+                              'RETURN VERIFYOUT (@INPUT @AMOUNT bidderaddress token ) "';
       Minima.cmd(bidScript, (res) => {
           // console.log(res)
           console.log('Set Bidder Script!');
