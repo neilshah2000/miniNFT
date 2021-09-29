@@ -106,7 +106,7 @@ function newKey() {
 function listBids() {
   return new Promise((resolve, reject) => {
 
-    Minima.cmd('coins relevant address:' + BIDDER_SCRIPT_ADDRESS + ' tokenid:0x00', (res) => {
+    Minima.cmd('coins address:' + BIDDER_SCRIPT_ADDRESS + ' tokenid:0x00', (res) => {
 
       console.log(res)
 
@@ -135,7 +135,7 @@ function listBids() {
 function listAuctions() {
   return new Promise((resolve, reject) => {
 
-    Minima.cmd('coins relevant address:' + AUCTION_SCRIPT_ADDRESS, (res) => {
+    Minima.cmd('coins address:' + AUCTION_SCRIPT_ADDRESS, (res) => {
 
       console.log(res);
 
