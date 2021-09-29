@@ -7,6 +7,7 @@ async function bidContract(coinid, tokenid) {
   console.log('Bidder address is ' + bidder_my_address + '. Seller will need this to accept bid')
 
   const aKey = await newKey()
+  console.log('Bidder public key is ' + aKey + '. Seller will need this to accept bid')
 
   // bidder bid 2 minima
   createBidTransaction(2, BIDDER_SCRIPT_ADDRESS, bidder_my_address, aKey, TOKENID);

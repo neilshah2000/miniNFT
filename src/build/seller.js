@@ -11,6 +11,7 @@ var sADDRESS = '';
  async function setAll() {
     
     mPUBLICKEY = await newKey();
+    console.log('Seller public key is ' + mPUBLICKEY + '. Will need this to accept bid')
     mADDRESS = await newAddress();
     console.log('Seller address is ' + mADDRESS + '. Will need this to accept bid')
     
