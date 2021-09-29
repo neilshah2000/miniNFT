@@ -155,6 +155,20 @@ function getCoinsFromAddress(address) {
 }
 
 
+function getAllMyCoins() {
+    return new Promise((resolve, reject) => {
+        command = 'balance'
+        Minima.cmd(command, (res) => {
+            if (res.status && res.response && res.response.balance) {
+                resolve(res.response.balance)
+            } else {
+                reject(res)
+            }
+        })
+    })
+}
+
+
 
 function getAllMyNFTs() {
     return new Promise((resolve, reject) => {
