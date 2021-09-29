@@ -112,8 +112,8 @@ function acceptABid(myCoinID, myTokenID, myAddress, bidAmount, bidCoinID, bidder
     // txnoutput 10 ${bidAmount} ${myAddress} ${MINIMA} 0;
 
     let command = `txncreate 10;
-        txninput 10 ${myCoinID} 0;
-        txninput 10 ${bidCoinID} 1;
+        txninput 10 ${bidCoinID} 0;
+        txninput 10 ${myCoinID} 1;
         txnoutput 10 0.00000000000000000000000000000000000000000001 ${bidderAddress} ${myTokenID} 0;
         txnoutput 10 ${bidAmount} ${myAddress} ${MINIMA} 1;
         txnsign 10 ${mPUBLICKEY};
