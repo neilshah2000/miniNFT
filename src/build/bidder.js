@@ -40,3 +40,14 @@ function viewAllMyAuctions(auctionContractAddress) {
 	const command = `coins address:${auctionContractAddress} relevent:true`
 	Minima.cmd(command, console.log)
 }
+
+
+
+function getCurrentHighestBid(auction) {
+
+}
+
+
+function getTimeLeftOnAuction(auction) {
+
+}

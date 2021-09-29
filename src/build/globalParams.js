@@ -104,63 +104,16 @@ function newKey() {
 }
 
 function listBids() {
-  return new Promise((resolve, reject) => {
-
-    Minima.cmd('coins relevant address:' + BIDDER_SCRIPT_ADDRESS + ' tokenid:0x00', (res) => {
-
-      console.log(res)
-
-      BIDS = []
-
-      res.response.coins.forEach((c) => {
-
-        const coin = {
-          coin: c.data.coin.coinid,
-          tokenid: c.data.coin.tokenid
-        }
-
-        BIDS.push(coin)
-
-      })
-
-      console.log(BIDS)
-
-
-    });
-
-  })
+  listAllBids(BIDDER_SCRIPT_ADDRESS).then((bids) => {
+    console.log('Global list of all bids', bids)
+  }, console.error)
 }
 
 
 function listAuctions() {
-  return new Promise((resolve, reject) => {
-
-    Minima.cmd('coins relevant address:' + AUCTION_SCRIPT_ADDRESS, (res) => {
-
-      console.log(res);
-
-      AUCTIONED_TOKENS = []
-
-      // Here are all current auctions
-
-      res.response.coins.forEach((c) => {
-
-        const coin = {
-          coin: c.data.coin.coinid,
-          tokenid: c.data.coin.tokenid
-        }
-          
-
-        AUCTIONED_TOKENS.push(coin);
-
-
-      });
-
-      console.log('Latest tokens on auction:' , AUCTIONED_TOKENS)
-
-    });
-
-  });
+  listAllAuctions(AUCTION_SCRIPT_ADDRESS).then((auctions) => {
+    console.log('Global list of all auctions', auctions)
+  }, console.error)
 }
 
 
@@ -214,7 +167,7 @@ function getAllYourPublicKeys() {
 // list all the NFTs (coinid and tokenid), listed in the auction
 function listAllAuctions(auctionContractAddress) {
   return new Promise((resolve, reject) => {
-    const command = 'coins relevant address:' + auctionContractAddress
+    const command = 'coins address:' + auctionContractAddress
     Minima.cmd(command, (res) => {
       if (res.status && res.response && res.response.coins) {
         const nfts = res.response.coins.map(c => {
@@ -224,6 +177,28 @@ function listAllAuctions(auctionContractAddress) {
           }
         })
         resolve(nfts)
+      } else {
+        reject(res)
+      }
+    })
+  })
+}
+
+
+// list all the bids (coinid and tokenid), listed in the bid contract
+function listAllBids(bidsContractAddress) {
+  const minimaTokenId = '0x00'
+  return new Promise((resolve, reject) => {
+    const command = `coins address:${bidsContractAddress} tokenid:${minimaTokenId}`
+    Minima.cmd(command, (res) => {
+      if (res.status && res.response && res.response.coins) {
+        const bids = res.response.coins.map(c => {
+          return {
+            coin: c.data.coin.coinid,
+            tokenid: c.data.coin.tokenid
+          }
+        })
+        resolve(bids)
       } else {
         reject(res)
       }
