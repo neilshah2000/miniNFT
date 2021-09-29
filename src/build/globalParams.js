@@ -5,7 +5,8 @@ var SCALE = 0; // manual
 
 var AUCTION_SCRIPT_ADDRESS = ''
 var BIDDER_SCRIPT_ADDRESS = ''
-
+var AUCTIONED_TOKENS = [];
+var BIDS = [];
 
 
 console.log('Manually set SCALE, TOKENID, ');
@@ -23,6 +24,8 @@ async function createSmartContracts() {
   AUCTION_SCRIPT_ADDRESS = await createAuctionContract()
   
   BIDDER_SCRIPT_ADDRESS = await createBidContract()
+
+  listAuctions()
 }
 
 
@@ -99,6 +102,34 @@ function newKey() {
   });
 }
 
+function listBids() {
+  return new Promise((resolve, reject) => {
+
+    Minima.cmd('coins relevant address:' + BIDDER_SCRIPT_ADDRESS + ' tokenid:0x00', (res) => {
+
+      console.log(res)
+
+      BIDS = []
+
+      res.response.coins.forEach((c) => {
+
+        const coin = {
+          coin: c.data.coin.coinid,
+          tokenid: c.data.coin.tokenid
+        }
+
+        BIDS.push(coin)
+
+      })
+
+      console.log(BIDS)
+
+
+    });
+
+  })
+}
+
 
 function listAuctions() {
   return new Promise((resolve, reject) => {
@@ -107,8 +138,9 @@ function listAuctions() {
 
       console.log(res);
 
+      AUCTIONED_TOKENS = []
+
       // Here are all current auctions
-      let auctionSpendableCoins = [];
 
       res.response.coins.forEach((c) => {
 
@@ -118,12 +150,12 @@ function listAuctions() {
         }
           
 
-        auctionSpendableCoins.push(coin);
+        AUCTIONED_TOKENS.push(coin);
 
 
       });
 
-      console.log(auctionSpendableCoins)
+      console.log('Latest tokens on auction:' , AUCTIONED_TOKENS)
 
     });
 

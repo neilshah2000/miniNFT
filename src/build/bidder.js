@@ -2,7 +2,7 @@
 /**
  * Automates the bidders actions
  */
-async function bidContract() {
+async function bidContract(coinid, tokenid) {
   const bidder_my_address = await newAddress()
   console.log('Bidder address is ' + bidder_my_address + '. Seller will need this to accept bid')
 
