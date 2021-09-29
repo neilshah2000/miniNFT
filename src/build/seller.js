@@ -200,7 +200,7 @@ function isCoinNFT(coin) {
  */
 function createNFT(nameStr) {
     let nftName = (Math.random() + 1).toString(36).substring(7);
-    let nftName = 'NFT-' + nftName
+    nftName = 'NFT-' + nftName
     if (typeof nameStr !== 'undefined') {
         nftName = nameStr
     }
