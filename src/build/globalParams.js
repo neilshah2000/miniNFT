@@ -195,7 +195,7 @@ function listAllBids(bidsContractAddress) {
         const bids = res.response.coins.map(c => {
           return {
             coin: c.data.coin.coinid,
-            tokenid: c.data.coin.tokenid
+            tokenidIWantToBuy: c.data.prevstate[2].data,
           }
         })
         resolve(bids)
