@@ -161,3 +161,71 @@ function listAuctions() {
 
   });
 }
+
+
+// Gets the list if all auctions.
+// Removes the ones the users has created themselves.
+// Returns just the ones they can bid on.
+// i.e. The auctions created by other users
+function listBiddableAuctions() {
+  // Get the list of keys this person owns
+  getAllYourPublicKeys()
+
+  // Get the list of all auctions
+  listAllAuctions(AUCTION_SCRIPT_ADDRESS)
+
+  // Remove from the auction list, auctions signed by any of this users public keys
+
+  // Return the resulting, filtered aution list
+}
+
+
+function getAllYourAddresses() {
+  return new Promise((resolve, reject) => {
+    const command = 'scripts'
+    Minima.cmd(command, (res) => {
+      if (res.status && res.response && res.response.addresses) {
+        const addresses = res.response.addresses.map(address => address.miniaddress)
+        resolve(addresses)
+      } else {
+        reject(res)
+      }
+    })
+  })
+}
+
+
+function getAllYourPublicKeys() {
+  return new Promise((resolve, reject) => {
+    const command = 'keys'
+    Minima.cmd(command, (res) => {
+      if (res.status && res.response && res.response.publickeys) {
+        const myKeys = res.response.publickeys.map(key => key.publickey)
+        resolve(myKeys)
+      } else {
+        reject(res)
+      }
+    })
+  })
+}
+
+
+// list all the NFTs (coinid and tokenid), listed in the auction
+function listAllAuctions(auctionContractAddress) {
+  return new Promise((resolve, reject) => {
+    const command = 'coins relevant address:' + auctionContractAddress
+    Minima.cmd(command, (res) => {
+      if (res.status && res.response && res.response.coins) {
+        const nfts = res.response.coins.map(c => {
+          return {
+            coin: c.data.coin.coinid,
+            tokenid: c.data.coin.tokenid
+          }
+        })
+        resolve(nfts)
+      } else {
+        reject(res)
+      }
+    })
+  })
+}
