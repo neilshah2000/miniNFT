@@ -196,6 +196,8 @@ function listAllBids(bidsContractAddress) {
           return {
             coin: c.data.coin.coinid,
             tokenidIWantToBuy: c.data.prevstate[2].data,
+            bidderAddress: c.data.prevstate[1].data,
+            bidderPubKey: c.data.prevstate[1].data
           }
         })
         resolve(bids)
