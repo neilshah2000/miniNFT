@@ -19,6 +19,15 @@ var sADDRESS = '';
 }
 
 
+async function selectNftForAuction(selectedNftIndex) {
+    const myNfts = await getAllMyNFTs()
+    const selectedNft = myNfts[selectedNftIndex]
+    const newPubKey = await newKey();
+    // TODO will need to save this public key, and use the same to accept the bid
+    mPUBLICKEY = newPubKey
+    const myNewAdress = await newAddress();
+    await createAuction(AUCTION_SCRIPT_ADDRESS, selectedNft.tokenid, newPubKey);
+}
 
 
 
@@ -67,14 +76,36 @@ function createAuction(auctionScriptAddress, myTokenId, publicKey) {
  * Get Updated CoinId
  * @param {*} zTokenId 
  * @returns Promise<String>
+ * 
+ * 
+ * TODO: There can be multiple coins with that tokenId.
+ * How do we find the correct one
  */
 function getCoinId(zTokenId) {
     return new Promise((resolve, reject) => {
+        if (typeof zTokenId === 'undefined') {
+            reject('No token id submitted')
+        }
         let command = `coins tokenid:${zTokenId} relevant:true`
         Minima.cmd(command, (res) => {
             console.log(res)
-            mCoinId = res.response.coins[0].data.coin.coinid
-            resolve(mCoinId)
+            // only resolve if we have exactly 1 coin id
+            if(res.status && res.response && res.response.coins && res.response.coins.length === 1){
+                mCoinId = res.response.coins[0].data.coin.coinid
+                resolve(mCoinId)
+            } else {
+                reject(res)
+            }
+        })
+    })
+}
+
+
+function selectBid(acceptedBidIndex) {
+    listAllBids(BIDDER_SCRIPT_ADDRESS).then((bids) => {
+        const selectedBid = bids[acceptedBidIndex]
+        newAddress().then((myNewAddress) => {
+            acceptBid(selectedBid.tokenidIWantToBuy, myNewAddress, selectedBid.coin, selectedBid.bidderAddress, 2, 44)
         })
     })
 }
@@ -89,20 +120,23 @@ function getCoinId(zTokenId) {
 // minimaAmountBid = 2
 // scale = 44
 
+
+// TODO pass in mPUBLICKEY as parameter
+
 // The Host accepts bid of bidder
-async function acceptBid(bidContract, nftTokenId, buyerAddress, minimaAmountBid, sellerAddress, scale) {
+async function acceptBid(nftTokenId, sellerAddress, minimaBidCoinId, buyerAddress, minimaAmountBid, scale) {
     let minimaAmountNFT = 1 / Math.pow(10, scale)
     let minimaTokenId = '0x00'
     const nftCoinId = await getCoinId(nftTokenId)
-    const bidContractCoinId = await getCoinIdFromBidContract(bidContract, buyerAddress)
+    // const bidContractCoinId = await getCoinIdFromBidContract(bidContract, buyerAddress)
 
     // 1st input is the bid contract (Minima).. 1st output is the NFT sent to the bidder
     // 2nd input is the NFT token..  2nd output is the Minima sent to the seller
     let command = `txncreate 10;
-        txninput 10 ${bidContractCoinId} 0;
-        txninput 10 ${nftCoinId} 1;
-        txnoutput 10 ${minimaAmountNFT} ${buyerAddress} ${nftTokenId} 0;
-        txnoutput 10 ${minimaAmountBid} ${sellerAddress} ${minimaTokenId} 1;
+        txninput 10 ${minimaBidCoinId};
+        txninput 10 ${nftCoinId};
+        txnoutput 10 ${minimaAmountNFT} ${buyerAddress} ${nftTokenId};
+        txnoutput 10 ${minimaAmountBid} ${sellerAddress} ${minimaTokenId};
         txnsign 10 ${mPUBLICKEY};
         txnpost 10;
         txndelete 10`
