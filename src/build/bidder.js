@@ -52,3 +52,12 @@ function getCurrentHighestBid(auction) {
 function getTimeLeftOnAuction(auction) {
 
 }
+
+function getAuctionByNFTTokenName() {
+
+}
+
+// list all auctions by name and image
+function seeAuctionsWithNameAndImage() {
+
+}

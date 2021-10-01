@@ -93,7 +93,7 @@ function getCoinId(zTokenId) {
 async function acceptBid(bidContract, nftTokenId, buyerAddress, minimaAmountBid, sellerAddress, scale) {
     let minimaAmountNFT = 1 / Math.pow(10, scale)
     let minimaTokenId = '0x00'
-    // const nftCoinId = await getCoinId(nftTokenId)
+    const nftCoinId = await getCoinId(nftTokenId)
     const bidContractCoinId = await getCoinIdFromBidContract(bidContract, buyerAddress)
 
     // 1st input is the bid contract (Minima).. 1st output is the NFT sent to the bidder
@@ -103,20 +103,27 @@ async function acceptBid(bidContract, nftTokenId, buyerAddress, minimaAmountBid,
         txninput 10 ${nftCoinId} 1;
         txnoutput 10 ${minimaAmountNFT} ${buyerAddress} ${nftTokenId} 0;
         txnoutput 10 ${minimaAmountBid} ${sellerAddress} ${minimaTokenId} 1;
+        txnsign 10 ${mPUBLICKEY};
         txnpost 10;
         txndelete 10`
     Minima.cmd(command, console.log)
 }
 
+
+// VERIFYOUT ( NUMBER HEX NUMBER HEX )
+// Verify the specified output has the specified address, amount and tokenid
+// 'RETURN VERIFYOUT (1 bidderaddress 0.00000000000000000000000000000000000000000001 token) "';
+
+// can use transaction validate to test
 function acceptABid(myCoinID, myTokenID, myAddress, bidAmount, bidCoinID, bidderAddress) {
     // txninput 10 ${bidCoinID} 0;
     // txnoutput 10 ${bidAmount} ${myAddress} ${MINIMA} 0;
 
     let command = `txncreate 10;
-        txninput 10 ${bidCoinID} 0;
-        txninput 10 ${myCoinID} 1;
-        txnoutput 10 0.00000000000000000000000000000000000000000001 ${bidderAddress} ${myTokenID} 0;
-        txnoutput 10 ${bidAmount} ${myAddress} ${MINIMA} 1;
+        txninput 10 ${bidCoinID};
+        txninput 10 ${myCoinID};
+        txnoutput 10 0.00000000000000000000000000000000000000000001 ${bidderAddress} ${myTokenID};
+        txnoutput 10 ${bidAmount} ${myAddress} ${MINIMA};
         txnsign 10 ${mPUBLICKEY};
         txnpost 10;
         txndelete 10`
@@ -162,7 +169,7 @@ function getCoinsFromAddress(address) {
     return new Promise((resolve, reject) => {
         command = `coins address:${address}`
         Minima.cmd(command, (res) => {
-            if (res.status && rbidCoinIDes.response && res.response.coins) {
+            if (res.status && res.response && res.response.coins) {
                 resolve(res.response.coins)
             } else {
                 reject(res)
@@ -171,9 +178,65 @@ function getCoinsFromAddress(address) {
     })
 }
 
+
+
+
+
+function getAllMyNFTs() {
+    return new Promise((resolve, reject) => {
+        command = 'balance'
+        Minima.cmd(command, (res) => {
+            if (res.status && res.response && res.response.balance) {
+                const nfts = res.response.balance.filter(isCoinNFTAndSendable)
+                resolve(nfts)
+            } else {
+                reject(res)
+            }
+        })
+    })
+}
+
+/**
+ * @param coin
+ * @returns true if the coins is an NFT.
+ */
+function isCoinNFTAndSendable(coin) {
+    return coin.decimals === '0' && coin.sendable > 0
+}
+
+/**
+ * @param nameStr
+ * @returns void
+ * Creates an NFT with the given name,
+ * or a random name if none is given
+ */
+function createNFT(nameStr) {
+    return new Promise((resolve, reject) => {
+        let nftName = (Math.random() + 1).toString(36).substring(7);
+        nftName = 'NFT-' + nftName
+        if (typeof nameStr !== 'undefined') {
+            nftName = nameStr
+        }
+        command = `tokencreate name:${nftName} amount:1.0`
+        Minima.cmd(command, (res) => {
+            if (res.status && res.response && res.response.txpow && res.response.txpow.body && res.response.txpow.body.txn && res.response.txpow.body.txn.tokengen) {
+                resolve(res.response.txpow.body.txn.tokengen)
+            } else {
+                reject(res)
+            }
+        })
+    })
+}
+
+
 // TODO
-getBidsForMyNFT(tokenId) {
+function getBidsForMyNFT(tokenId) {
     listAllBids.then(() => {
         // filter for my tokenid
     })
 }
+
+
+
+// TODO
+// add bid amount into bidder contract list

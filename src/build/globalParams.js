@@ -10,6 +10,22 @@ var BIDS = [];
 var MINIMA = '0x00'
 
 
+
+
+// Initialise minima.js
+// MUST DO
+
+Minima.init((res) => {
+  if(res.event === 'connected' && res.info === 'success') {
+    console.log('Minima Initialized', res)
+  } else {
+    // loads of other messages, do nothing
+  }
+})
+
+
+
+
 console.log('Manually set SCALE, TOKENID, ');
 
 
@@ -50,6 +66,14 @@ async function createSmartContracts() {
 /**
  * Register Bidder Script
  * @returns Hexaddress of script
+ * 
+ * 
+ *  VERIFYOUT ( NUMBER HEX NUMBER HEX )
+ *  Verify the specified output has the specified address, amount and tokenid
+ * 
+ * 
+ *  IC app has it like
+ *  VERIFYOUT (0 0xCCEEFFEE @AMOUNT @TOKENID )
  */
 function createBidContract() {
   return new Promise((resolve, reject) => {
@@ -61,7 +85,7 @@ function createBidContract() {
                                       'THEN RETURN TRUE ' +
                               'ENDIF ' +
                               
-                              'RETURN VERIFYOUT (@INPUT @AMOUNT bidderaddress token ) "';
+                              'RETURN VERIFYOUT (@INPUT bidderaddress 1 token) "';
       Minima.cmd(bidScript, (res) => {
           // console.log(res)
           console.log('Set Bidder Script!');
