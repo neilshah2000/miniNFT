@@ -21,3 +21,8 @@
 
 6) listBids()
 7) selectBid(0)
+
+
+# Create
+
+1) buildNFT() - may have to call twice (TODO: fix this bug)
