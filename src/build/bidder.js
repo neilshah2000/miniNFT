@@ -1,24 +1,43 @@
 
+function selectAuctionToBidOn(bidIndex, amount) {
+    listAllBids(bidsContractAddress).then(() => {
+        
+    })
+    bidContract(TOKENID, 2)
+}
+
+
+
+
+
 /**
  * Automates the bidders actions
  */
-async function bidContract(coinid, tokenid) {
-  const bidder_my_address = await newAddress()
-  console.log('Bidder address is ' + bidder_my_address + '. Seller will need this to accept bid')
+async function bidContract(tokenid, amount) {
+    const bidder_my_address = await newAddress()
+    console.log('Bidder address is ' + bidder_my_address + '. Seller will need this to accept bid')
 
-  const aKey = await newKey()
-  console.log('Bidder public key is ' + aKey + '. Seller will need this to accept bid')
+    const aKey = await newKey()
+    console.log('Bidder public key is ' + aKey + '. Seller will need this to accept bid')
 
-  // bidder bid 2 minima
-  createBidTransaction(2, BIDDER_SCRIPT_ADDRESS, bidder_my_address, aKey, TOKENID);
+    // bidder bid 2 minima
+    return createBidTransaction(amount, BIDDER_SCRIPT_ADDRESS, bidder_my_address, aKey, tokenid);
 
 }
 
 
 function createBidTransaction(amount, scriptAddress, myAddress, myPubKey, tokenIdIWant) {
-  const minimaTokenId = '0x00'
-  const sendTransaction = `send ${amount} ${scriptAddress} ${minimaTokenId} 0:${myPubKey}#1:${myAddress}#2:${tokenIdIWant}`
-  Minima.cmd(sendTransaction, console.log)
+    return new Promise((resolve, reject) => {
+        const minimaTokenId = '0x00'
+        const sendTransaction = `send ${amount} ${scriptAddress} ${minimaTokenId} 0:${myPubKey}#1:${myAddress}#2:${tokenIdIWant}`
+        Minima.cmd(sendTransaction, (res) => {
+            if(res.status && res.message === 'Send Success') {
+                resolve(res)
+            } else {
+                reject(res)
+            }
+        })
+    })
 }
 
 

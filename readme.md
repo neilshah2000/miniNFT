@@ -15,7 +15,9 @@
 1) getAllMyNFTs().then(console.log)
 2) selectNftForAuction(0)
 
-3) Bidder searches auction and sets TOKENID and SCALE
+3) Bidder searches auction - listAuctions()
+4) Sets TOKENID and SCALE
+5) bidContract(TOKENID, 2) to create bid
 
-4) listBids()
-5) selectBid(0)
+6) listBids()
+7) selectBid(0)

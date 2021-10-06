@@ -263,6 +263,28 @@ function createNFT(nameStr) {
 }
 
 
+
+function createNFTWithImage(nameStr, encodedImage) {
+    return new Promise((resolve, reject) => {
+        let nftName = (Math.random() + 1).toString(36).substring(7);
+        nftName = 'NFT-' + nftName
+        if (typeof nameStr !== 'undefined') {
+            nftName = nameStr
+        }
+        const encodedImageJSON = JSON.stringify({ artImage: encodedImage })
+        command = `tokencreate name:${nftName} amount:1.0 description:${encodedImageJSON}`
+        Minima.cmd(command, (res) => {
+            if (res.status && res.response && res.response.txpow && res.response.txpow.body && res.response.txpow.body.txn && res.response.txpow.body.txn.tokengen) {
+                resolve(res.response.txpow.body.txn.tokengen)
+            } else {
+                reject(res)
+            }
+        })
+    })
+}
+
+
+
 // TODO
 function getBidsForMyNFT(tokenId) {
     listAllBids.then(() => {
@@ -270,6 +292,14 @@ function getBidsForMyNFT(tokenId) {
     })
 }
 
+
+function buildNFT(nameStr) {
+    getResizedImage(0.2).then((encoded) => {
+        console.log('NFT image string', encoded)
+        const onlyString = encoded.slice(encoded.indexOf(',') + 1)
+        createNFTWithImage(nameStr, onlyString).then(console.log, console.error)
+    })
+}
 
 
 // TODO
